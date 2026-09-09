@@ -4,9 +4,10 @@ from circleshape import CircleShape
 from shot import Shot
 
 class Player(CircleShape):
-    def __init__(self, x, y, rotation = 0.0):
+    def __init__(self, x, y, rotation = 0.0, shoot_timer = 0.0):
         super().__init__(x, y, PLAYER_RADIUS)
         self.rotation = rotation
+        self.shoot_timer = shoot_timer
 
     # Player displays as a triangle, but a circle is used for collision detection
     def triangle(self) -> list[pygame.Vector2]:
@@ -35,7 +36,11 @@ class Player(CircleShape):
         if keys[pygame.K_s] or keys[pygame.K_DOWN]:
             self.move(-dt)
         if keys[pygame.K_SPACE]:
-            self.shoot()
+            if self.shoot_timer > 0:
+                self.shoot_timer -= dt
+            else:
+                self.shoot()
+                self.shoot_timer = PLAYER_SHOOT_COOLDOWN_SECONDS
 
     def move(self, dt: float) -> None:
         unit_vector = pygame.Vector2(0, 1)
